@@ -1,18 +1,13 @@
 const express = require('express');
 const path = require('path');
-const multer = require('multer');
-const fs = require('fs');
 const { createClient } = require('@supabase/supabase-js');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-
+const crypto = require('crypto');
 require('dotenv').config();
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
-
-const upload = multer({ dest: 'uploads/' });
-
 const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
 const app = express();
@@ -21,9 +16,10 @@ const port = 3000;
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
-    secret: require('crypto').randomBytes(64).toString('hex'),
+    secret: crypto.randomBytes(64).toString('hex'),
     resave: false,
     saveUninitialized: true
 }));
@@ -55,58 +51,38 @@ app.get('/admin', requireLogin, (req, res) => {
     res.render('admin');
 });
 
-app.post('/admin/add-book', requireLogin, upload.single('cover_image'), (req, res) => {
-  const { title, author, opinion, month, year } = req.body;
-  const coverImage = req.file;
-
-  if (!coverImage) {
-    return res.status(400).send('Cover image is required.');
-  }
-
-  fs.readFile(coverImage.path, 'base64', async (err, base64Image) => {
-    if (err) {
-      console.error('Error reading image file:', err);
-      return res.status(500).send('Internal Server Error');
-    }
+app.post('/admin/add-book', requireLogin, async (req, res) => {
+    const { title, author, opinion, month, year, cover_image } = req.body;
 
     try {
-      const { data, error } = await supabaseClient
-        .from('books')
-        .insert([{ title, author, opinion, cover_image: base64Image, month, year }]);
-
-      if (error) {
-        console.error('Error adding book:', error);
-        return res.status(500).send('Internal Server Error');
-      }
-
-      // Clean up the uploaded file
-      fs.unlinkSync(coverImage.path);
-
-      res.redirect('/');
-    } catch (error) {
-      console.error('Error processing request:', error);
-      res.status(500).send('Internal Server Error');
-    }
-  });
-});
-
-
-app.get('/', (req, res) => {
-    (async () => {
-        const { data, error } = await supabaseClient
+        const { data: bookData, error: insertError } = await supabaseClient
             .from('books')
-            .select('*');
+            .insert([{ title, author, opinion, cover_image, month, year }]);
 
-        if (error) {
-            console.error('Error fetching data:', error);
-            res.status(500).send('Internal Server Error');
-            return;
+        if (insertError) {
+            console.error('Error adding book:', insertError);
+            return res.status(500).send('Internal Server Error');
         }
 
-        books = data || [];
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error processing request:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
-        res.render('index', { books: data });
-    })();
+app.get('/', async (req, res) => {
+    const { data, error } = await supabaseClient
+        .from('books')
+        .select('*');
+
+    if (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).send('Internal Server Error');
+        return;
+    }
+
+    res.render('index', { books: data });
 });
 
 app.listen(port, () => {
