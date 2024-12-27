@@ -16,8 +16,9 @@ const port = 3000;
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+
 app.use(session({
     secret: crypto.randomBytes(64).toString('hex'),
     resave: false,
@@ -53,9 +54,7 @@ app.get('/admin', requireLogin, (req, res) => {
 
 app.post('/admin/add-book', requireLogin, async (req, res) => {
     const { title, author, opinion, month, year, cover_image_base64 } = req.body;
-
-    console.log('Adding book:', title, author, opinion, month, year, cover_image_base64);
-
+    
     try {
         const { data: bookData, error: insertError } = await supabaseClient
             .from('books')
