@@ -1,5 +1,7 @@
 const express = require('express');
 const path = require('path');
+const multer = require('multer');
+const fs = require('fs');
 const { createClient } = require('@supabase/supabase-js');
 const bodyParser = require('body-parser');
 const session = require('express-session');
@@ -8,6 +10,8 @@ require('dotenv').config();
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
+
+const upload = multer({ dest: 'uploads/' });
 
 const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
@@ -51,23 +55,41 @@ app.get('/admin', requireLogin, (req, res) => {
     res.render('admin');
 });
 
-app.post('/admin/add-book', requireLogin, (req, res) => {
-    const { title, author, opinion, cover_image, month, year } = req.body;
+app.post('/admin/add-book', requireLogin, upload.single('cover_image'), (req, res) => {
+  const { title, author, opinion, month, year } = req.body;
+  const coverImage = req.file;
 
-    (async () => {
-        const { data, error } = await supabaseClient
-            .from('books')
-            .insert([{ title, author, opinion, cover_image, month, year }]);
+  if (!coverImage) {
+    return res.status(400).send('Cover image is required.');
+  }
 
-        if (error) {
-            console.error('Error adding book:', error);
-            res.status(500).send('Internal Server Error');
-            return;
-        }
+  fs.readFile(coverImage.path, 'base64', async (err, base64Image) => {
+    if (err) {
+      console.error('Error reading image file:', err);
+      return res.status(500).send('Internal Server Error');
+    }
 
-        res.redirect('/');
-    })();
+    try {
+      const { data, error } = await supabaseClient
+        .from('books')
+        .insert([{ title, author, opinion, cover_image: base64Image, month, year }]);
+
+      if (error) {
+        console.error('Error adding book:', error);
+        return res.status(500).send('Internal Server Error');
+      }
+
+      // Clean up the uploaded file
+      fs.unlinkSync(coverImage.path);
+
+      res.redirect('/');
+    } catch (error) {
+      console.error('Error processing request:', error);
+      res.status(500).send('Internal Server Error');
+    }
+  });
 });
+
 
 app.get('/', (req, res) => {
     (async () => {
