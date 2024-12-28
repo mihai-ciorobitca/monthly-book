@@ -1,31 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
   <div class="container">
-    <h1 class="mt-5">Login</h1>
-    <% if (typeof error !== 'undefined') { %>
-      <div class="alert alert-danger"><%= error %></div>
-    <% } %>
-    <form action="/login" method="post" class="mt-3">
-      <div class="form-group">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" class="form-control" required>
+    <h2 class="mt-5">Login</h2>
+    <% if (typeof error !=='undefined' ) { %>
+      <div class="alert alert-danger">
+        <%= error %>
       </div>
-      <div class="form-group">
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" class="form-control" required>
-      </div>
-      <button type="submit" class="btn btn-primary">Login</button>
-    </form>
+      <% } %>
+        <form action="/login" method="post" class="mt-3">
+          <div class="form-group">
+            <label for="username">Username:</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-user"></i></span>
+              </div>
+              <input type="text" id="username" name="username" class="form-control" placeholder="Enter your username"
+                required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+              </div>
+              <input type="password" id="password" name="password" class="form-control"
+                placeholder="Enter your password" required>
+              <div class="input-group-append">
+                <button type="button" class="btn btn-outline-secondary" id="togglePassword">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+          <p class="mt-3">No account? <a href="/register">Register</a></p>
+          <p class="mt-3"></p>
+          <button type="button" class="btn btn-secondary" onclick="location.href='/'">
+            <i class="fas fa-book"></i> Main Page
+          </button>
+          </p>
+        </form>
   </div>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+  <script>
+    document.getElementById('togglePassword').addEventListener('click', function () {
+      const passwordField = document.getElementById('password');
+      const passwordFieldType = passwordField.getAttribute('type');
+      if (passwordFieldType === 'password') {
+        passwordField.setAttribute('type', 'text');
+        this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+      } else {
+        passwordField.setAttribute('type', 'password');
+        this.innerHTML = '<i class="fas fa-eye"></i>';
+      }
+    });
+  </script>
 </body>
+
 </html>

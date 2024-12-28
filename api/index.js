@@ -4,7 +4,10 @@ const { createClient } = require('@supabase/supabase-js');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const crypto = require('crypto');
-require('dotenv').config();
+const svgCaptcha = require('svg-captcha');
+const dotenv = require('dotenv');
+const speakeasy = require('speakeasy');
+dotenv.config();
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
@@ -26,37 +29,100 @@ app.use(session({
 }));
 
 function requireLogin(req, res, next) {
-    if (req.session.loggedIn) {
+    if (req.session.username) {
         next();
     } else {
         res.redirect('/login');
     }
 }
 
-app.get('/login', (req, res) => {
+app.get('/login', (_, res) => {
     res.render('login');
 });
 
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
-    if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
-        req.session.loggedIn = true;
-        res.redirect('/admin');
+    const { data: user, error } = await supabaseClient
+        .from('users')
+        .select('*')
+        .eq('username', username)
+        .maybeSingle();
+
+    if (error) {
+        console.error('Error fetching user:', error);
+        return res.status(500).send('Internal Server Error');
+    }
+
+    if (user && user.password === crypto.createHash('sha256').update(password).digest('hex')) {
+        req.session.username = username;
+        req.session.recoveryCode = user.recovery_code;
+        res.redirect('/home');
     } else {
-        res.status(401).send('Invalid credentials');
+        res.render('login', { error: 'Invalid username or password' });
     }
 });
 
-app.get('/admin', requireLogin, (req, res) => {
-    res.render('admin');
+app.get('/register', (req, res) => {
+    res.render('register');
 });
 
-app.post('/admin/add-book', requireLogin, async (req, res) => {
+app.post('/register', async (req, res) => {
+    const { username, password, captcha } = req.body;
+
+    const hashedCaptcha = crypto.createHash('sha256').update(captcha).digest('hex');
+
+    if (hashedCaptcha !== req.session.captcha) {
+        return res.status(400).render('register', { error: `Invalid captcha` });
+    }
+
+    const { data: existingUser, error: fetchError } = await supabaseClient
+        .from('users')
+        .select('*')
+        .eq('username', username)
+        .maybeSingle();
+
+    if (fetchError && fetchError.code !== 'PGRST116') {
+        console.error('Error checking user existence:', fetchError);
+        return res.status(500).send('Internal Server Error');
+    }
+
+    if (existingUser) {
+        return res.status(400).render('register', { error: 'User already exists' });
+    }
+
+    const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
+    const secret = speakeasy.generateSecret({ length: 20 });
+
+    const { error: insertError } = await supabaseClient
+        .from('users')
+        .insert([{ username, password: hashedPassword, recovery_code: secret.base32 }]);
+
+    if (insertError) {
+        console.error('Error registering user:', insertError);
+        return res.status(500).send('Internal Server Error');
+    }
+
+    res.redirect('/login');
+});
+
+app.get('/captcha', (req, res) => {
+    const captcha = svgCaptcha.create();
+    const hashedCaptcha = crypto.createHash('sha256').update(captcha.text).digest('hex');
+    req.session.captcha = hashedCaptcha;
+    res.type('svg');
+    res.status(200).send(captcha.data);
+});
+
+app.get('/home', requireLogin, (req, res) => {
+    res.render('home', { username: req.session.username, recoveryCode: req.session.recoveryCode });
+});
+
+app.post('/home/add-book', requireLogin, async (req, res) => {
     const { title, author, opinion, month, year, cover_image_base64 } = req.body;
-    
+
     try {
-        const { data: bookData, error: insertError } = await supabaseClient
+        const { error: insertError } = await supabaseClient
             .from('books')
             .insert([{ title, author, opinion, cover_image: cover_image_base64, month, year }]);
 
@@ -83,7 +149,17 @@ app.get('/', async (req, res) => {
         return;
     }
 
-    res.render('index', { books: data });
+    res.render('index', { books: data, username: req.session.username });
+});
+
+app.post('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            console.error('Error destroying session:', err);
+            return res.status(500).send('Internal Server Error');
+        }
+        res.redirect('/login');
+    });
 });
 
 app.listen(port, () => {

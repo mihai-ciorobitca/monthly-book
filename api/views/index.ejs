@@ -5,10 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Books Information</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        .card-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="mb-4">Books Information</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>All books</h1>
+            <% if (username) { %>
+            <a href="/home" class="btn btn-primary"><i class="fas fa-home"></i> Home </a>
+            <% } else { %>
+            <a href="/login" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Login </a>
+            <% } %>
+        </div>
         <div class="row">
             <% books.forEach(function(book) { %>
                 <div class="col-md-4 mb-4">
@@ -16,17 +34,47 @@
                         <img src="data:image/jpeg;base64,<%= book.cover_image %>" class="card-img-top" alt="<%= book.title %>">
                         <div class="card-body">
                             <h5 class="card-title"><%= book.title %></h5>
-                            <p class="card-text"><strong>Author:</strong> <%= book.author %></p>
-                            <p class="card-text"><strong>Published:</strong> <%= book.month %> <%= book.year %></p>
-                            <p class="card-text"><strong>Opinion:</strong> <%= book.opinion %></p>
+                            <p class="card-text"><strong><i class="fas fa-user"></i> Author:</strong> <%= book.author %></p>
+                            <p class="card-text"><strong><i class="fas fa-calendar-alt"></i> Published:</strong> <%= book.month %> - <%= book.year %></p>
+                            <p class="card-text"><strong><i class="fas fa-comment"></i> Opinion:</strong> <%= book.opinion %></p>
+                            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#opinionModal" data-opinion="<%= book.opinion %>"><i class="fas fa-book-open"></i> Read More</button>
                         </div>
                     </div>
                 </div>
             <% }); %>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="opinionModal" tabindex="-1" aria-labelledby="opinionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="opinionModalLabel">Book Opinion</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="modalOpinionText"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $('#opinionModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var opinion = button.data('opinion'); // Extract info from data-* attributes
+            var modal = $(this);
+            modal.find('.modal-body #modalOpinionText').text(opinion);
+        });
+    </script>
 </body>
 </html>
