@@ -124,7 +124,7 @@ app.post('/home/add-book', requireLogin, async (req, res) => {
     try {
         const { error: insertError } = await supabaseClient
             .from('books')
-            .insert([{ title, author, opinion, cover_image: cover_image_base64, month: new Date().toLocaleString('default', { month: 'long' }), year: new Date().getFullYear() }]);
+            .insert([{ username: req.session.username, title, author, opinion, cover_image: cover_image_base64, month: new Date().toLocaleString('default', { month: 'long' }), year: new Date().getFullYear() }]);
 
         if (insertError) {
             console.error('Error adding book:', insertError);
