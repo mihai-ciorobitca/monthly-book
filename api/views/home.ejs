@@ -15,16 +15,22 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);;
     }
 
     body {
       background-color: #e9ecef;
     }
 
+    .custom-file-label {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
     #opinion {
       resize: none;
-      overflow-y: scroll;
+      overflow-y: hidden;
     }
 
     .custom-file-input:hover {
@@ -34,57 +40,63 @@
 </head>
 
 <body>
-  <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <button type="button" class="btn btn-secondary" onclick="location.href='/'">
-        <i class="fas fa-home"></i>
-      </button>
-      <h2 class="m-3 text-center flex-grow-1">Hello, <%= username %></h2>
-      <a href="/logout" class="btn btn-danger ml-2">
-        <i class="fas fa-sign-out-alt"></i> Exit
-      </a>
+  <div class="container">
+    <div class="card">
+      <div class="card-header p-2 d-flex justify-content-between align-items-center">
+        <button type="button" class="btn btn-secondary" onclick="location.href='/'">
+          <i class="fas fa-home"></i>
+        </button>
+        <h2 class="m-0 text-center flex-grow-1">Hello, <%= username %></h2>
+        <form action="/logout" method="post">
+          <button type="submit" class="btn btn-danger">Logout</button>
+        </form>
+      </div>
+      <form id="add-book-form" action="/home/add-book" method="post">
+        <div class="card-body p-2">
+          <div class="form-group mb-2">
+            <label for="title">Title:</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-book"></i></span>
+              </div>
+              <input type="text" class="form-control" id="title" name="title" placeholder="Enter book title" required>
+            </div>
+          </div>
+          <div class="form-group mb-2">
+            <label for="author">Author:</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-user"></i></span>
+              </div>
+              <input type="text" class="form-control" id="author" name="author" placeholder="Enter author's name" required>
+            </div>
+          </div>
+          <div class="form-group mb-2">
+            <label for="opinion">Opinion:</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-comment"></i></span>
+              </div>
+              <textarea class="form-control" id="opinion" name="opinion" rows="4" minlength="800" maxlength="1500"
+                placeholder="Enter your opinion (800-1500 characters)" required></textarea>
+            </div>
+          </div>
+          <div class="form-group mb-2">
+            <label for="cover_image_file">Cover Image:</label>
+            <div class="custom-file">
+              <input type="file" class="custom-file-input" id="cover_image_file" name="cover_image_file" accept="image/*" required>
+              <label class="custom-file-label" for="cover_image_file">Choose file</label>
+            </div>
+            <input type="hidden" id="cover_image_base64" name="cover_image_base64">
+          </div>
+          <button type="button" class="btn btn-secondary btn-block mt-2" id="recovery-code-button">Recovery Code</button>
+          <input type="hidden" id="recovery-code" value="<%= recoveryCode %>">
+        </div>
+        <div class="card-footer p-2">
+          <button type="submit" class="btn btn-primary btn-block" id="submit-button">Submit</button>
+        </div>
+      </form>
     </div>
-    <form id="add-book-form" action="/home/add-book" method="post" class="shadow p-3 bg-light rounded">
-      <div class="form-group">
-        <label for="title">Title:</label>
-        <div class="input-group">
-          <div class="input-group-prepend">
-            <span class="input-group-text"><i class="fas fa-book"></i></span>
-          </div>
-          <input type="text" class="form-control" id="title" name="title" placeholder="Enter book title" required>
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="author">Author:</label>
-        <div class="input-group">
-          <div class="input-group-prepend">
-            <span class="input-group-text"><i class="fas fa-user"></i></span>
-          </div>
-          <input type="text" class="form-control" id="author" name="author" placeholder="Enter author's name" required>
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="opinion">Opinion:</label>
-        <div class="input-group">
-          <div class="input-group-prepend">
-            <span class="input-group-text"><i class="fas fa-comment"></i></span>
-          </div>
-          <textarea class="form-control" id="opinion" name="opinion" rows="4" minlength="800" maxlength="1500"
-            placeholder="Enter your opinion (800-1500 characters)" required></textarea>
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="cover_image_file">Cover Image:</label>
-        <div class="custom-file">
-          <input type="file" class="custom-file-input" id="cover_image_file" name="cover_image_file" accept="image/*" required>
-          <label class="custom-file-label" for="cover_image_file">Choose file</label>
-        </div>
-        <input type="hidden" id="cover_image_base64" name="cover_image_base64">
-      </div>
-      <button type="submit" class="btn btn-primary btn-block" id="submit-button">Submit</button>
-      <button type="button" class="btn btn-secondary btn-block mt-2" id="recovery-code-button">Recovery Code</button>
-      <input type="hidden" id="recovery-code" value="<%= recoveryCode %>">
-    </form>
   </div>
   <script>
     document.getElementById('cover_image_file').addEventListener('change', function (event) {
