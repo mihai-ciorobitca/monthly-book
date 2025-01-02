@@ -6,9 +6,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Home</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
   <link rel="icon" href="/favicon.png" type="image/x-icon">
   <style>
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    body {
+      background-color: #e9ecef;
+    }
+
     #opinion {
       resize: none;
       overflow-y: scroll;
@@ -21,44 +34,55 @@
 </head>
 
 <body>
-  <div class="container mt-5 mb-5">
+  <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1 class="h3">Hello, <%= username %>
-      </h1>
-      <div>
-        <a href="/" class="btn btn-primary">
-          <i class="fas fa-home"></i> Main page
-        </a>
-        <a href="/logout" class="btn btn-danger ml-2">
-          <i class="fas fa-sign-out-alt"></i> Logout
-        </a>
-      </div>
+      <button type="button" class="btn btn-secondary" onclick="location.href='/'">
+        <i class="fas fa-home"></i>
+      </button>
+      <h2 class="m-3 text-center flex-grow-1">Hello, <%= username %></h2>
+      <a href="/logout" class="btn btn-danger ml-2">
+        <i class="fas fa-sign-out-alt"></i> Exit
+      </a>
     </div>
-    <form id="add-book-form" action="/home/add-book" method="post" class="mt-4">
+    <form id="add-book-form" action="/home/add-book" method="post" class="shadow p-3 bg-light rounded">
       <div class="form-group">
         <label for="title">Title:</label>
-        <input type="text" class="form-control" id="title" name="title" placeholder="Enter book title" required>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fas fa-book"></i></span>
+          </div>
+          <input type="text" class="form-control" id="title" name="title" placeholder="Enter book title" required>
+        </div>
       </div>
       <div class="form-group">
         <label for="author">Author:</label>
-        <input type="text" class="form-control" id="author" name="author" placeholder="Enter author's name" required>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fas fa-user"></i></span>
+          </div>
+          <input type="text" class="form-control" id="author" name="author" placeholder="Enter author's name" required>
+        </div>
       </div>
       <div class="form-group">
         <label for="opinion">Opinion:</label>
-        <textarea class="form-control" id="opinion" name="opinion" rows="4" minlength="800" maxlength="1500"
-          placeholder="Enter your opinion (800-1500 characters)" required></textarea>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fas fa-comment"></i></span>
+          </div>
+          <textarea class="form-control" id="opinion" name="opinion" rows="4" minlength="800" maxlength="1500"
+            placeholder="Enter your opinion (800-1500 characters)" required></textarea>
+        </div>
       </div>
       <div class="form-group">
         <label for="cover_image_file">Cover Image:</label>
         <div class="custom-file">
-          <input type="file" class="custom-file-input" id="cover_image_file" name="cover_image_file" accept="image/*"
-            required>
+          <input type="file" class="custom-file-input" id="cover_image_file" name="cover_image_file" accept="image/*" required>
           <label class="custom-file-label" for="cover_image_file">Choose file</label>
         </div>
         <input type="hidden" id="cover_image_base64" name="cover_image_base64">
       </div>
-      <button type="submit" class="btn btn-primary" id="submit-button">Submit</button>
-      <button type="button" class="btn btn-secondary ml-2" id="recovery-code-button">Recovery Code</button>
+      <button type="submit" class="btn btn-primary btn-block" id="submit-button">Submit</button>
+      <button type="button" class="btn btn-secondary btn-block mt-2" id="recovery-code-button">Recovery Code</button>
       <input type="hidden" id="recovery-code" value="<%= recoveryCode %>">
     </form>
   </div>

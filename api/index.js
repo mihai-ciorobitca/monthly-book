@@ -104,7 +104,31 @@ app.post('/register', async (req, res) => {
         return res.status(500).send('Internal Server Error');
     }
 
+    const qrCodeUrl = speakeasy.otpauthURL({ secret: secret.base32, label: username, issuer: 'Monthly Book' });
+    const qrCodeBase64 = await new Promise((resolve, reject) => {
+        require('qrcode').toDataURL(qrCodeUrl, (err, data) => {
+            if (err) reject(err);
+            else resolve(data);
+        });
+    });
+
+    req.session.secretCode = secret.base32;
+    req.session.qrCodeBase64 = qrCodeBase64;
+
+    res.redirect('/qrcode');
+});
+
+app.post('/remove-secret-code', (req, res) => {
+    delete req.session.secretCode;
+    delete req.session.qrCodeBase64;
     res.redirect('/login');
+});
+
+app.get('/qrcode', (req, res) => {
+    if (!req.session.secretCode) {
+        return res.redirect('/register');
+    }
+    res.render('qrcode', { qrCodeBase64: req.session.qrCodeBase64, secretCode: req.session.secretCode });
 });
 
 app.get('/captcha', (req, res) => {
@@ -137,6 +161,53 @@ app.post('/home/add-book', requireLogin, async (req, res) => {
         console.error('Error processing request:', error);
         res.status(500).send('Internal Server Error');
     }
+});
+
+app.get('/reset-password', (_, res) => {
+    res.render('reset');
+});
+
+app.post('/reset-password', async (req, res) => {
+    const { otpId, otpCode, newPassword } = req.body;
+
+    const { data: user, error } = await supabaseClient
+        .from('users')
+        .select('*')
+        .eq('recovery_code', otpId)
+        .maybeSingle();
+
+    if (error) {
+        console.error('Error fetching user:', error);
+        return res.status(500).send('Internal Server Error');
+    }
+
+    if (!user) {
+        return res.status(400).render('reset', { error: 'Invalid OTP ID' });
+    }
+
+    const verified = speakeasy.totp.verify({
+        secret: user.recovery_code,
+        encoding: 'base32',
+        token: otpCode
+    });
+
+    if (!verified) {
+        return res.status(400).render('reset', { error: 'Invalid OTP Code' });
+    }
+
+    const hashedPassword = crypto.createHash('sha256').update(newPassword).digest('hex');
+
+    const { error: updateError } = await supabaseClient
+        .from('users')
+        .update({ password: hashedPassword })
+        .eq('recovery_code', otpId);
+
+    if (updateError) {
+        console.error('Error updating password:', updateError);
+        return res.status(500).send('Internal Server Error');
+    }
+
+    res.redirect('/login');
 });
 
 app.get('/', async (req, res) => {
