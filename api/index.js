@@ -225,6 +225,15 @@ app.get('/', async (req, res) => {
     let { data: authors, error: authorError } = await supabaseClient
         .from('books')
         .select('author')
+    
+    authors = authors.reduce((acc, current) => {
+        const x = acc.find(item => item.author === current.author);
+        if (!x) {
+            return acc.concat([current]);
+        } else {
+            return acc;
+        }
+    }, []);
 
     if (authorError) {
         console.error('Error fetching data:', authorError);
