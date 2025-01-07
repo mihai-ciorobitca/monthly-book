@@ -211,7 +211,32 @@ app.post('/reset-password', async (req, res) => {
 });
 
 app.get('/', async (req, res) => {
-    const { data, error } = await supabaseClient
+    let { data: books, error: booksError } = await supabaseClient
+        .from('books')
+        .select('*')
+        .eq('month', new Date().toLocaleString('default', { month: 'long' }))
+
+    if (booksError) {
+        console.error('Error fetching data:', booksError);
+        res.status(500).send('Internal Server Error');
+        return;
+    }
+
+    let { data: authors, error: authorError } = await supabaseClient
+        .from('books')
+        .select('author')
+
+    if (authorError) {
+        console.error('Error fetching data:', authorError);
+        res.status(500).send('Internal Server Error');
+        return;
+    }
+
+    res.render('index', { books: books, username: req.session.username, authors: authors });
+});
+
+app.get('/books', async (req, res) => {
+    let { data: books, error } = await supabaseClient
         .from('books')
         .select('*');
 
@@ -221,7 +246,8 @@ app.get('/', async (req, res) => {
         return;
     }
 
-    res.render('index', { books: data, username: req.session.username });
+    res.render('books', { books: books, username: req.session.username });
+
 });
 
 app.post('/logout', (req, res) => {

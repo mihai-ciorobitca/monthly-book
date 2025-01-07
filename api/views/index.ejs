@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Books Information</title>
+    <title>Monthly Book</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="/favicon.png" type="image/x-icon">
@@ -16,39 +17,255 @@
             line-clamp: 3;
             -webkit-box-orient: vertical;
         }
+
+        .collapse-toggle {
+            cursor: pointer;
+        }
+
+        .collapse-toggle i {
+            transition: transform 0.3s;
+        }
+
+        .collapse.show .collapse-toggle i {
+            transform: rotate(180deg);
+        }
+
+        .list-unstyled li {
+            margin-bottom: 10px;
+        }
+
+        .nav-link.home {
+            color: #28a745;
+        }
+
+        .nav-link.login {
+            color: #007bff;
+        }
+
+        .nav-link.register {
+            color: #ffc107;
+        }
+
+        .nav-link.logout {
+            color: #dc3545;
+        }
     </style>
 </head>
+
 <body>
-    <div class="container mt-5">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>All books</h1>
-            <% if (username) { %>
-            <a href="/home" class="btn btn-primary"><i class="fas fa-home"></i> Home </a>
-            <% } else { %>
-            <a href="/login" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Login </a>
-            <% } %>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <a class="navbar-brand" href="#">📚 Monthly Book</a>
+        <button class="navbar-toggler" type="button" data-toggle="modal" data-target="#menuModal">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                <% if (username) { %>
+                    <li class="nav-item">
+                        <a class="nav-link home" href="/home"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link logout" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link register" href="/register"><i class="fas fa-user-plus"></i> Register</a>
+                    </li>
+                    <% } else { %>
+                        <li class="nav-item">
+                            <a class="nav-link login" href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link register" href="/register"><i class="fas fa-user-plus"></i> Register</a>
+                        </li>
+                        <% } %>
+            </ul>
         </div>
+    </nav>
+
+    <div class="container">
+        <div class="text-center mb-5">
+            <h1 class="display-4">Welcome Reader! 📖</h1>
+            <p class="lead">This website is designed to help people develop a habit of reading. Stay with us, and you'll
+                read a lot!</p>
+        </div>
+
+        <div class="card mb-5">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">
+                    <span class="collapse-toggle" data-toggle="collapse" href="#introduction" role="button"
+                        aria-expanded="true" aria-controls="introduction">
+                        Introduction <i class="fas fa-chevron-down"></i>
+                    </span>
+                </h2>
+            </div>
+            <div class="collapse show" id="introduction">
+                <div class="card-body">
+                    <p>Reading is essential for keeping your brain active and healthy. Just like any other muscle, your
+                        brain needs exercise to stay in shape. Reading regularly can help you maintain mental agility
+                        and prevent cognitive decline.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-5"></div>
+        <div class="card-header d-flex justify-content-between align-items-center"></div>
+        <h2 class="mb-0"></h2>
+        <span class="collapse-toggle" data-toggle="collapse" href="#advice" role="button" aria-expanded="false"
+            aria-controls="advice">
+            Reading Tips 📚 <i class="fas fa-chevron-down"></i>
+        </span>
+        </h2>
+    </div>
+    <div class="collapse" id="advice"></div>
+    <div class="card-body"></div>
+    <ul class="list-unstyled">
+        <li><b>Read daily, multiple times a day:</b> Make reading a habit, just like brushing your teeth. You don't get
+            any reward if you brush your teeth but in time you can see the difference.</li>
+        <li><b>Set a minimum page goal:</b> Aim to read at least 10 pages per session. Gradually increase your reading
+            speed and comprehension over time.</li>
+    </ul>
+    </div>
+    </div>
+    </div>
+
+    <div class="card mb-5">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">
+                <span class="collapse-toggle" data-toggle="collapse" href="#websites" role="button"
+                    aria-expanded="false" aria-controls="websites">
+                    Free Book Resources 🌐 <i class="fas fa-chevron-down"></i>
+                </span>
+            </h2>
+        </div>
+        <div class="collapse" id="websites">
+            <div class="card-body">
+                <p>Don't let a lack of funds stop you from reading. Here are some websites where you can download free
+                    books:</p>
+                <ul class="list-unstyled">
+                    <li><a href="https://www.gutenberg.org/" target="_blank">Project Gutenberg</a></li>
+                    <li><a href="https://www.openlibrary.org/" target="_blank">Open Library</a></li>
+                    <li><a href="https://www.pdfdrive.com/" target="_blank">PDF Drive</a></li>
+                    <li><a href="https://www.free-ebooks.net/" target="_blank">Free EBooks</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-5">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">
+                <span class="collapse-toggle" data-toggle="collapse" href="#authors" role="button" aria-expanded="false"
+                    aria-controls="authors">
+                    Recommended Authors ✍️ <i class="fas fa-chevron-down"></i>
+                </span>
+            </h2>
+        </div>
+        <div class="collapse" id="authors">
+            <div class="card-body">
+                <p>Here are some authors recommended by our users:</p>
+                <ul class="list-unstyled">
+                    <% authors.forEach(function(author) { %>
+                        <li>
+                            <%= author %>
+                        </li>
+                        <% }); %>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-5">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">
+                <span class="collapse-toggle" data-toggle="collapse" href="#genres" role="button" aria-expanded="false"
+                    aria-controls="genres">
+                    Popular Genres 📚 <i class="fas fa-chevron-down"></i>
+                </span>
+            </h2>
+        </div>
+        <div class="collapse" id="genres">
+            <div class="card-body">
+                <p>Explore different genres to find what interests you the most:</p>
+                <ul class="list-unstyled">
+                    <li>Fiction</li>
+                    <li>Non-Fiction</li>
+                    <li>Science Fiction</li>
+                    <li>Fantasy</li>
+                    <li>Mystery</li>
+                    <li>Biography</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <section class="mb-5">
+        <h2 class="text-center">Books Read This Month</h2>
         <div class="row">
             <% books.forEach(function(book) { %>
                 <div class="col-md-4 mb-4">
                     <div class="card">
-                        <img src="data:image/jpeg;base64,<%= book.cover_image %>" class="card-img-top" alt="<%= book.title %>">
+                        <img src="data:image/jpeg;base64,<%= book.cover_image %>" class="card-img-top"
+                            alt="<%= book.title %>">
                         <div class="card-body">
-                            <h5 class="card-title"><%= book.title %></h5>
-                            <p class="card-text"><strong><i class="fas fa-user"></i> Author:</strong> <%= book.author %></p>
-                            <p class="card-text"><strong><i class="fas fa-calendar-alt"></i> Published:</strong> <%= book.month %> - <%= book.year %></p>
-                            <p class="card-text"><strong><i class="fas fa-comment"></i> Opinion:</strong> <%= book.opinion %></p>
-                            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#opinionModal" data-opinion="<%= book.opinion %>"><i class="fas fa-book-open"></i> Read More</button>
+                            <h5 class="card-title">
+                                <%= book.title %>
+                            </h5>
+                            <p class="card-text"><strong><i class="fas fa-user"></i> Author:</strong>
+                                <%= book.author %>
+                            </p>
+                            <p class="card-text"><strong><i class="fas fa-calendar-alt"></i> Published:</strong>
+                                <%= book.month %> - <%= book.year %>
+                            </p>
+                            <p class="card-text"><strong><i class="fas fa-comment"></i> Opinion:</strong>
+                                <%= book.opinion %>
+                            </p>
+                            <button type="button" class="btn btn-secondary" data-toggle="modal"
+                                data-target="#opinionModal" data-opinion="<%= book.opinion %>"><i
+                                    class="fas fa-book-open"></i> Read More</button>
                         </div>
                     </div>
                 </div>
-            <% }); %>
+                <% }); %>
+        </div>
+    </section>
+
+    <div class="text-center mb-5">
+        <a href="/books" class="btn btn-primary"><i class="fas fa-book-reader"></i> View All Books Read by Users</a>
+    </div>
+    </div>
+
+    <!-- Modal for Hamburger Menu -->
+    <div class="modal fade" id="menuModal" tabindex="-1" aria-labelledby="menuModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="menuModalLabel">Menu</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-unstyled">
+                        <% if (username) { %>
+                            <li><a href="/home" class="btn btn-link"><i class="fas fa-home"></i> Home</a></li>
+                            <li><a href="/logout" class="btn btn-link"><i class="fas fa-sign-out-alt"></i>
+                                    Logout</a></li>
+                            <% } else { %>
+                                <li><a href="/login" class="btn btn-link"><i class="fas fa-sign-in-alt"></i> Login</a>
+                                </li>
+                                <% } %>
+                                    <li><a href="/register" class="btn btn-link"><i class="fas fa-user-plus"></i>
+                                            Register</a></li>
+
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal for Book Opinion -->
     <div class="modal fade" id="opinionModal" tabindex="-1" aria-labelledby="opinionModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="opinionModalLabel">Book Opinion</h5>
@@ -66,6 +283,7 @@
         </div>
     </div>
 
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -78,4 +296,5 @@
         });
     </script>
 </body>
+
 </html>
