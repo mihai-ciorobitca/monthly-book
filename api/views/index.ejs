@@ -49,6 +49,15 @@
         .nav-link.logout {
             color: #dc3545;
         }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .content {
+            flex: 1;
+        } 
     </style>
 </head>
 
@@ -59,13 +68,17 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse">
-            <ul class="navbar-nav ml-auto">
+            <ul class="navbar-nav ml-auto d-flex align-items-center">
                 <% if (username) { %>
                     <li class="nav-item">
                         <a class="nav-link home" href="/home"><i class="fas fa-home"></i> Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link logout" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        <form action="/logout" method="POST" class="form-inline" style="display: inline;">
+                            <button type="submit" class="btn btn-link nav-link logout" style="padding: 0; border: none; background: none;">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </form>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link register" href="/register"><i class="fas fa-user-plus"></i> Register</a>
@@ -80,7 +93,8 @@
                 <% } %>
             </ul>
         </div>
-    </nav>
+    </nav>    
+    
 
     <div class="container">
         <div class="text-center mb-5">

@@ -46,10 +46,9 @@
         <button type="button" class="btn btn-secondary" onclick="location.href='/'">
           <i class="fas fa-home"></i>
         </button>
-        <h2 class="m-0 text-center flex-grow-1">Hello, <%= username %></h2>
-        <form action="/logout" method="post">
-          <button type="submit" class="btn btn-danger">Logout</button>
-        </form>
+        <div class="h2 d-none d-sm-block">Hello, <%= username %></div>
+        <div class="h4 d-sm-none">Hello, <%= username %></div>
+        <button type="button" class="btn btn-info" onclick="location.href='/home/books'">My Books</button>
       </div>
       <form id="add-book-form" action="/home/add-book" method="post">
         <div class="card-body p-2">
@@ -89,11 +88,18 @@
             </div>
             <input type="hidden" id="cover_image_base64" name="cover_image_base64">
           </div>
-          <button type="button" class="btn btn-secondary btn-block mt-2" id="recovery-code-button">Recovery Code</button>
+          <button type="submit" class="btn btn-primary btn-block" id="submit-button">Submit</button>
           <input type="hidden" id="recovery-code" value="<%= recoveryCode %>">
         </div>
-        <div class="card-footer p-2">
-          <button type="submit" class="btn btn-primary btn-block" id="submit-button">Submit</button>
+        <div class="card-footer p-2 d-flex justify-content-between">
+            <div class="form-group mb-0 col-6">
+            <button type="button" class="btn btn-secondary btn-block" id="recovery-code-button">Code</button>
+            </div>
+          <div class="form-group mb-0 col-6">
+            <form action="/logout" method="post" class="mt-2">
+              <button type="submit" class="btn btn-danger btn-block">Logout</button>
+            </form>
+          </div>
         </div>
       </form>
     </div>
