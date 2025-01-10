@@ -66,4 +66,24 @@ router.post('/reject', async (req, res) => {
     return res.redirect('/');
 });
 
+router.post('/delete', async (req, res) => {
+    if (req.session.username !== 'admin') {
+        return res.redirect('/');
+    }
+
+    const { title } = req.body;
+
+    const { error } = await supabaseClient
+        .from('books')
+        .delete()
+        .eq('title', title);
+
+    if (error) {
+        console.error('Error deleting book:', error);
+        return res.status(500).send('Internal Server Error');
+    }
+
+    return res.redirect('/');
+});
+
 module.exports = router;

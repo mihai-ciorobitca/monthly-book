@@ -67,10 +67,13 @@
                                 <p class="card-text"><strong><i class="fas fa-comment"></i> Opinion:</strong>
                                     <%= book.opinion %>
                                 </p>
+                                <p class="card-text"><strong><i class="fas fa-info-circle"></i> Status:</strong>
+                                    <%= book.status %>
+                                </p>
                                 <button type="button" class="btn btn-secondary" data-toggle="modal"
                                     data-target="#opinionModal" data-opinion="<%= book.opinion %>"><i
                                         class="fas fa-book-open"></i> Read More</button>
-                                <% if (book.status === 'pending' || book.status === 'reject') { %>
+                                <% if (book.status === 'pending' || book.status === 'rejected') { %>
                                 <form action="/admin/approve" method="POST" class="mt-2">
                                     <input type="hidden" name="title" value="<%= book.title %>">
                                     <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Approve</button>
@@ -80,9 +83,14 @@
                                 <% if (book.status === 'pending' || book.status === 'approved') { %>
                                 <form action="/admin/reject" method="POST" class="mt-2">
                                     <input type="hidden" name="title" value="<%= book.title %>">
-                                    <button type="submit" class="btn btn-danger"><i class="fas fa-times"></i> Reject</button>
+                                    <button type="submit" class="btn btn-warning"><i class="fas fa-times"></i> Reject</button>
                                 </form>
                                 <% } %>
+
+                                <form action="/admin/delete" method="POST" class="mt-2 delete-form"></form>
+                                    <input type="hidden" name="title" value="<%= book.title %>">
+                                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button>
+                                </form>
                             </div>
                         </div>
                     </div>
