@@ -54,10 +54,10 @@
             <div class="row">
                 <% books.forEach(function(book) { %>
                     <div class="col-md-4 mb-4">
-                        <div class="card">
+                        <div class="card h-100">
                             <img src="data:image/jpeg;base64,<%= book.cover_image %>" class="card-img-top"
                                 alt="<%= book.title %>">
-                            <div class="card-body">
+                            <div class="card-body d-flex flex-column">
                                 <h5 class="card-title">
                                     <%= book.title %>
                                 </h5>
@@ -73,35 +73,35 @@
                                 <p class="card-text"><strong><i class="fas fa-info-circle"></i> Status:</strong>
                                     <%= book.status %>
                                 </p>
-                                <button type="button" class="btn btn-secondary" data-toggle="modal"
-                                    data-target="#opinionModal" data-opinion="<%= book.opinion %>"><i
-                                        class="fas fa-book-open"></i> Read More</button>
-                                <% if (book.status==='pending' || book.status==='rejected' ) { %>
-                                    <form action="/admin/approve" method="POST" class="mt-2">
-                                        <input type="hidden" name="title" value="<%= book.title %>">
-                                        <button type="submit" class="btn btn-success"><i class="fas fa-check"></i>
-                                            Approve</button>
-                                    </form>
+                                <div class="mt-auto">
+                                    <button type="button" class="btn btn-secondary btn-block" data-toggle="modal"
+                                        data-target="#opinionModal" data-opinion="<%= book.opinion %>"><i
+                                            class="fas fa-book-open"></i> Read More</button>
+                                    <% if (book.status==='pending' || book.status==='rejected' ) { %>
+                                        <form action="/admin/approve" method="POST" class="mt-2">
+                                            <input type="hidden" name="title" value="<%= book.title %>">
+                                            <button type="submit" class="btn btn-success btn-block"><i class="fas fa-check"></i>
+                                                Approve</button>
+                                        </form>
                                     <% } %>
-
-                                        <% if (book.status==='pending' || book.status==='approved' ) { %>
-                                            <form action="/admin/reject" method="POST" class="mt-2">
-                                                <input type="hidden" name="title" value="<%= book.title %>">
-                                                <button type="submit" class="btn btn-warning"><i
-                                                        class="fas fa-times"></i> Reject</button>
-                                            </form>
-                                            <% } %>
-
-                                                <form action="/admin/delete" method="POST" class="mt-2 delete-form"
-                                                    id="delete-form">
-                                                    <input type="hidden" name="title" value="<%= book.title %>">
-                                                    <button type="submit" class="btn btn-danger"><i
-                                                            class="fas fa-trash-alt"></i> Delete</button>
-                                                </form>
+                                    <% if (book.status==='pending' || book.status==='approved' ) { %>
+                                        <form action="/admin/reject" method="POST" class="mt-2">
+                                            <input type="hidden" name="title" value="<%= book.title %>">
+                                            <button type="submit" class="btn btn-warning btn-block"><i
+                                                    class="fas fa-times"></i> Reject</button>
+                                        </form>
+                                    <% } %>
+                                    <form action="/admin/delete" method="POST" class="mt-2 delete-form"
+                                        id="delete-form">
+                                        <input type="hidden" name="title" value="<%= book.title %>">
+                                        <button type="submit" class="btn btn-danger btn-block"><i
+                                                class="fas fa-trash-alt"></i> Delete</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <% }); %>
+                <% }); %>
             </div>
         </section>
     </div>
