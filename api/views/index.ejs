@@ -229,7 +229,14 @@
                     <ul class="list-unstyled">
                         <% if (username) { %>
                             <li><a href="/home" class="btn btn-link"><i class="fas fa-home"></i> Home</a></li>
-                            <li><a href="/logout" class="btn btn-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                            <form action="/logout" method="POST" class="form-inline" style="display: inline;">
+                                <button type="submit" class="btn btn-link"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                            </form>
+                        <li>
+                            <form action="/logout" method="POST" class="form-inline" style="display: inline;">
+                                <button type="submit" class="btn btn-link"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                            </form>
+                        </li>
                         <% } else { %>
                             <li><a href="/login" class="btn btn-link"><i class="fas fa-sign-in-alt"></i> Login</a></li>
                         <% } %>

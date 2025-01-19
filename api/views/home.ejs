@@ -91,17 +91,17 @@
           <button type="submit" class="btn btn-primary btn-block" id="submit-button">Submit</button>
           <input type="hidden" id="recovery-code" value="<%= recoveryCode %>">
         </div>
-        <div class="card-footer p-2 d-flex justify-content-between">
-            <div class="form-group mb-0 col-6">
-            <button type="button" class="btn btn-secondary btn-block" id="recovery-code-button">Code</button>
-            </div>
-          <div class="form-group mb-0 col-6">
-            <form action="/logout" method="post" class="mt-2">
-              <button type="submit" class="btn btn-danger btn-block">Logout</button>
-            </form>
-          </div>
-        </div>
       </form>
+      <div class="card-footer p-2 d-flex justify-content-between">
+        <div class="form-group mb-0 col-6">
+        <button type="button" class="btn btn-secondary btn-block" id="recovery-code-button">Code</button>
+        </div>
+      <div class="form-group mb-0 col-6">
+        <form action="/logout" method="post" class="mt-2">
+          <button type="submit" class="btn btn-danger btn-block">Logout</button>
+        </form>
+      </div>
+    </div>
     </div>
   </div>
   <script>
